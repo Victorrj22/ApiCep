@@ -1,18 +1,19 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace ApiCEP.Api.BrasilApi
+﻿namespace CepApi.Api.ViaCEP
 {
-    public class BrasilApi : ICepProvider
+    public class ViaCep : ICepProvider
     {
+        static HttpClient cliente = new HttpClient();
         public async Task<string> GetCepAsync(string cep)
         {
-            var url = $"https://brasilapi.com.br/api/cep/v1/{cep}";
+            var url = $"https://viacep.com.br/ws/{cep}/json";
+
             using (var client = new HttpClient())
             {
                 var json = await client.GetStringAsync(url);
                 return json;
             }
+            
         }
     }
 }
+

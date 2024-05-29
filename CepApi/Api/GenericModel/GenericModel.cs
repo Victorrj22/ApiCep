@@ -1,6 +1,9 @@
 ﻿
 
-namespace ApiCEP.Api.GenericModel
+using System.Text.Encodings.Web;
+using System.Text.Json;
+
+namespace CepApi.Api.GenericModel
 {
     public class GenericModel
     {
@@ -20,6 +23,9 @@ namespace ApiCEP.Api.GenericModel
         public string ddd { get; set; }
         public string siafi { get; set; }
 
-        
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this, new JsonSerializerOptions() { WriteIndented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
+        }
     }
 }

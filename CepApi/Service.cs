@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using ApiCEP.Api.BrasilApi;
-using ApiCEP.Api.GenericModel;
-using ApiCEP.Api.OpenCep;
 using ApiCEP.Api.WSCorreios;
-using ApiCEP.WSCorreios;
-using Newtonsoft.Json;
+using CepApi.Api.BrasilApi;
+using CepApi.Api.GenericModel;
+using CepApi.Api.OpenCep;
+using CepApi.Api.ViaCEP;
 using Exception = System.Exception;
 
-namespace ApiCEP
+namespace CepApi
 {
     public class Service
     {
@@ -27,24 +27,23 @@ namespace ApiCEP
                 openCep.GetCepAsync(cep),
                 brasilApi.GetCepAsync(cep)
             };
-            
+
             var primeiroRetorno = await Task.WhenAny(tasks);
             var resultadoJson = await primeiroRetorno;
 
             //Caso não ache pelas outras APIs, utiliza o WS dos correios
-            if (resultadoJson == null)
+            if (resultadoJson.Equals(""))
             {
                 var webServiceCorreios = await wsCorreios.GetCepAsync(cep);
-                var enderecoCorreios = JsonConvert.DeserializeObject<GenericModel>(webServiceCorreios);
-                
+                var enderecoCorreios = JsonSerializer.Deserialize<GenericModel>(webServiceCorreios, new JsonSerializerOptions());
+
                 //todo: Fazer o Mapeamento
             }
-
             
-            var endereco = JsonConvert.DeserializeObject<GenericModel>(resultadoJson);
+            var endereco = JsonSerializer.Deserialize<GenericModel>(resultadoJson!);
             var model = new GenericModel()
             {
-                bairro = endereco.bairro,
+                bairro = endereco!.bairro,
                 complemento = endereco.complemento,
                 localidade = endereco.localidade,
                 logradouro = endereco.logradouro,
@@ -60,30 +59,8 @@ namespace ApiCEP
                 street = endereco.street,
                 uf = endereco.uf
             };
-
-            var listaRetorno = new List<string>();
-
-            try
-            {
-                // Obtém todas as propriedades do modelo usando reflexão
-                var properties = typeof(GenericModel).GetProperties();
-                
-                foreach (var property in properties)
-                {
-                    var value = property.GetValue(model);
-
-                    if (value != null && (string)value != "")
-                        listaRetorno.Add(value.ToString());
-                }
-                
-                return model;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
             
+            return model;
         }
     }
 }

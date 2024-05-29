@@ -1,7 +1,4 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace ApiCEP.Api.BrasilApi
+﻿namespace CepApi.Api.BrasilApi
 {
     public class BrasilApi : ICepProvider
     {
