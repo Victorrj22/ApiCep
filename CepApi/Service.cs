@@ -36,8 +36,25 @@ namespace CepApi
             {
                 var webServiceCorreios = await wsCorreios.GetCepAsync(cep);
                 var enderecoCorreios = JsonSerializer.Deserialize<GenericModel>(webServiceCorreios, new JsonSerializerOptions());
-
-                //todo: Fazer o Mapeamento
+                var modelCorreios = new GenericModel()
+                {
+                    bairro = enderecoCorreios!.bairro,
+                    complemento = enderecoCorreios.complemento,
+                    localidade = enderecoCorreios.localidade,
+                    logradouro = enderecoCorreios.logradouro,
+                    cep = enderecoCorreios.cep,
+                    city = enderecoCorreios.city,
+                    neighborhood = enderecoCorreios.neighborhood,
+                    ddd = enderecoCorreios.ddd,
+                    gia = enderecoCorreios.gia,
+                    ibge = enderecoCorreios.ibge,
+                    service = enderecoCorreios.service,
+                    siafi = enderecoCorreios.siafi,
+                    state = enderecoCorreios.state,
+                    street = enderecoCorreios.street,
+                    uf = enderecoCorreios.uf
+                };
+                return modelCorreios;
             }
             
             var endereco = JsonSerializer.Deserialize<GenericModel>(resultadoJson!);
